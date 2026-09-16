@@ -13,6 +13,7 @@ import { sdkRoutes } from './sdk'
 import { pluginStoreRoutes } from './plugin-store'
 import { onlineUpdateRoutes } from './online-update'
 import { ticketRoutes } from './ticket'
+import { plusResourceCenterRoutes } from './plus-resource-center'
 
 /**
  * 导出所有模块化路由
@@ -31,5 +32,6 @@ export const routeModules: AppRouteRecord[] = [
   sdkRoutes,
   systemRoutes,
   onlineUpdateRoutes,
-  ticketRoutes
+  ticketRoutes,
+  plusResourceCenterRoutes
 ]
