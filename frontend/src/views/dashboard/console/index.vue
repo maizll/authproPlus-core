@@ -1,8 +1,5 @@
 <template>
   <div class="admin-dashboard">
-    <!-- 顶部广告：与应用商店一致的跑马灯，数据走 /api/advertisements?position=home-banner -->
-    <ArtPromotionMarquee :items="topAdItems" subtitle="来自软件源的插件与增值服务" height="200px" />
-
     <ElRow :gutter="16" class="card-row">
       <ElCol v-for="item in overview.cards" :key="item.title" :xs="12" :sm="8" :lg="4">
         <div class="art-card stat-card">
@@ -73,9 +70,6 @@
         </div>
       </ElCol>
 
-      <ElCol :xs="24" :lg="8" class="trend-status-col">
-        <ArtPromotionBoard :pages="promotionPages" subtitle="来自软件源的扩展与增值服务" />
-      </ElCol>
     </ElRow>
 
     <ElRow :gutter="16" class="metric-row">
@@ -241,14 +235,9 @@
     fetchAdminDashboardTrend,
     fetchAdminDashboardUserMetrics
   } from '@/api/dashboard'
-  import { usePromotionAds, usePromotionAdPages } from '@/hooks'
 
   defineOptions({ name: 'Console' })
 
-  // 顶部跑马灯广告：home-banner 位，含招租占位与失败降级
-  const { items: topAdItems } = usePromotionAds('home-banner')
-  // 推荐服务九宫格：sidebar 位，每页 9 格、不足补招租占位、超过 9 条自动翻页
-  const { pages: promotionPages } = usePromotionAdPages('sidebar', 9)
 
   const overview = reactive<AdminDashboardOverview>({
     cards: [],

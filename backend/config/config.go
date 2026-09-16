@@ -243,18 +243,24 @@ func GetHomeTemplateDir() string {
 	return dir
 }
 
-// 官方软件源连接信息随后端编译，不从环境变量、配置文件或管理页面读取。
-// 固定 Key 仅用于目录读取；内置不代表保密，不能用于管理写权限。
+// 软件源默认保持上游兼容；authproPlus 可通过专用环境变量切换到自有只读源。
+// API Key 仅用于目录读取；它不是管理凭据，不能用于写入权限。
 const (
 	softwareSourceURL    = "https://plug.91ani.cn"
 	softwareSourceAPIKey = "317e605c32344a416c907b9fad0a26b9adf87410554707c7f09d447b2de61cff"
 )
 
 func GetSoftwareSourceURL() string {
+	if value := strings.TrimSpace(os.Getenv("AUTHPROPLUS_SOFTWARE_SOURCE_URL")); value != "" {
+		return strings.TrimRight(value, "/")
+	}
 	return softwareSourceURL
 }
 
 func GetSoftwareSourceAPIKey() string {
+	if value := strings.TrimSpace(os.Getenv("AUTHPROPLUS_SOFTWARE_SOURCE_API_KEY")); value != "" {
+		return value
+	}
 	return softwareSourceAPIKey
 }
 
@@ -279,8 +285,8 @@ func GetSoftwareSourceCacheDir() string {
 	return dir
 }
 
-// DefaultAdvertisementURL 是默认的广告投放接口地址，可用 AUTO_PRO_ADVERTISEMENT_URL 覆盖。
-const DefaultAdvertisementURL = "https://plug.91ani.cn/api/v1/public/advertisements"
+// DefaultAdvertisementURL 已清空。广告内容后续由 Plus 按应用管理，不再连接上游广告源。
+const DefaultAdvertisementURL = ""
 
 func GetAdvertisementURL() string {
 	return strings.TrimRight(strings.TrimSpace(envOrDefault("AUTO_PRO_ADVERTISEMENT_URL", DefaultAdvertisementURL)), "/")
