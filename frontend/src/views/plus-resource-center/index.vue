@@ -4,7 +4,7 @@
       <div>
         <div class="eyebrow"><span class="eyebrow-dot"></span> AUTHPROPLUS CONTROL PLANE</div>
         <h1>资源控制中心</h1>
-        <p>按应用统一管理插件源、首页模板与广告策略，客户端只从 Plus 获取已授权内容。</p>
+        <p>查看当前应用的资源状态，具体管理请使用左侧独立页面。</p>
       </div>
       <div class="hero-actions">
         <span class="sync-state"><i></i> 配置预览模式</span>
@@ -29,6 +29,15 @@
     </section>
 
     <ElCard class="workspace-card" shadow="never">
+      <div class="overview-links">
+        <a v-for="item in overviewLinks" :key="item.title" class="overview-link" :href="item.href">
+          <span class="overview-link-icon" :class="item.color"><ArtSvgIcon :icon="item.icon" /></span>
+          <span class="overview-link-copy"><strong>{{ item.title }}</strong><small>{{ item.description }}</small></span>
+          <ArtSvgIcon icon="ri:arrow-right-line" class="overview-arrow" />
+        </a>
+      </div>
+      <!-- 详细管理已经拆分到独立页面，此处只保留跨模块状态概览。 -->
+      <div v-if="false">
       <ElTabs v-model="activeTab" class="resource-tabs">
         <ElTabPane name="plugins">
           <template #label><span class="tab-label"><ArtSvgIcon icon="ri:extension-line" />插件目录</span></template>
@@ -64,6 +73,7 @@
           <div class="source-list"><div v-for="source in sources" :key="source.name" class="source-row"><div class="source-mark"><ArtSvgIcon icon="ri:server-line" /></div><div class="source-main"><strong>{{ source.name }}</strong><span>{{ source.url }}</span></div><ElTag type="success" effect="light">连接正常</ElTag><span class="source-updated">同步于 {{ source.updated }}</span><ElButton link type="primary" @click="openCreate">配置</ElButton></div></div>
         </ElTabPane>
       </ElTabs>
+      </div>
     </ElCard>
 
     <ElDialog v-model="dialogVisible" title="资源编辑器" width="520px"><div class="dialog-placeholder"><div class="placeholder-icon"><ArtSvgIcon icon="ri:tools-line" /></div><h3>页面原型已就绪</h3><p>这里将接入真实的新增、编辑、发布和授权接口。当前只展示交互入口，不会写入生产数据。</p><ElTag type="info">下一阶段接入服务端 API</ElTag></div><template #footer><ElButton @click="dialogVisible = false">关闭</ElButton></template></ElDialog>
@@ -89,11 +99,23 @@
   const templates = [{ name: 'Aurora 登录页', short: 'A', version: '1.3.0', schema: 2, active: true, tone: 'aurora' }, { name: 'Midnight 控制台', short: 'M', version: '1.0.4', schema: 2, active: false, tone: 'midnight' }, { name: 'Minimal 极简页', short: 'M', version: '0.9.2', schema: 1, active: false, tone: 'minimal' }]
   const ads = [{ title: 'Plus Pro 专业版', description: '升级授权，解锁完整能力', position: 'home-banner', period: '2026/09/01 — 2026/10/01', weight: 90, active: true, tone: 'violet' }, { title: '支付插件限时优惠', description: '订阅插件首月优惠', position: 'sidebar', period: '2026/09/10 — 长期', weight: 60, active: true, tone: 'orange' }, { title: '新版本功能预告', description: '了解 authproPlus 最新能力', position: 'popup', period: '未发布', weight: 20, active: false, tone: 'blue' }]
   const sources = [{ name: 'authproPlus 官方源', url: 'https://source.authproplus.example/api', updated: '刚刚' }, { name: '企业私有源', url: 'https://packages.example.com/authpro', updated: '12 分钟前' }]
+  const overviewLinks = [
+    { title: '插件管理', description: '版本、发布与付费属性', href: '/plus-resources/plugins', icon: 'ri:apps-2-line', color: 'purple' },
+    { title: '首页模板', description: '登录页与用户入口模板', href: '/plus-resources/templates', icon: 'ri:layout-4-line', color: 'blue' },
+    { title: '广告策略', description: '广告位、周期与投放权重', href: '/plus-resources/ads', icon: 'ri:advertisement-line', color: 'orange' },
+    { title: '插件源', description: '目录来源与同步状态', href: '/plus-resources/sources', icon: 'ri:database-2-line', color: 'green' }
+  ]
   const openCreate = () => { dialogVisible.value = true }
 </script>
 
 <style scoped>
   .resource-center { --ink: #172033; --muted: #7d879b; --line: #e9edf4; padding: 24px; color: var(--ink); background: #f6f8fc; min-height: 100%; }
+  .overview-links { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+  .overview-link { display:flex; align-items:center; gap:13px; min-width:0; padding:16px; border:1px solid var(--line); border-radius:12px; color:var(--ink); text-decoration:none; background:#fff; transition:.2s; }
+  .overview-link:hover { border-color:#b7b5ed; box-shadow:0 8px 20px rgba(35,45,90,.07); transform:translateY(-1px); }
+  .overview-link-icon { display:grid; place-items:center; flex:0 0 40px; width:40px; height:40px; border-radius:11px; font-size:20px; }
+  .overview-link-icon.purple { color:#7354c8; background:#f1ecff; }.overview-link-icon.blue { color:#3c83d7; background:#eaf4ff; }.overview-link-icon.orange { color:#d97729; background:#fff1e5; }.overview-link-icon.green { color:#2d9d68; background:#e7f8ef; }
+  .overview-link-copy { display:flex; flex:1; min-width:0; flex-direction:column; gap:4px; }.overview-link-copy strong { font-size:14px; }.overview-link-copy small { overflow:hidden; color:var(--muted); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }.overview-arrow { color:#aab2c0; }
   .hero-panel { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; padding:30px 34px; border-radius:20px; color:#fff; background:linear-gradient(120deg,#1c2541 0%,#27345a 54%,#674e9b 100%); box-shadow:0 16px 42px rgba(32,44,86,.18); }
   .eyebrow { color:#b8c4e7; font-size:11px; letter-spacing:1.5px; font-weight:700; }.eyebrow-dot { display:inline-block;width:7px;height:7px;border-radius:50%;background:#8ee7c0;margin-right:8px;box-shadow:0 0 0 4px rgba(142,231,192,.14); }
   h1 { margin:10px 0 6px; font-size:30px; letter-spacing:-.8px; }.hero-panel p { margin:0; color:#bdc7df; font-size:13px; }.hero-actions { display:flex;align-items:center;gap:18px; }.sync-state { color:#cbd5ee;font-size:12px;white-space:nowrap; }.sync-state i { display:inline-block;width:6px;height:6px;border-radius:50%;background:#8ee7c0;margin-right:7px; }
@@ -103,6 +125,6 @@
   .template-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:18px; }.template-card { padding:14px;border:1px solid var(--line);border-radius:13px; }.template-preview { height:150px;border-radius:9px;padding:13px;color:#fff;position:relative;overflow:hidden; }.template-preview.aurora { background:linear-gradient(140deg,#7162d4,#d78fb1); }.template-preview.midnight { background:linear-gradient(140deg,#17233e,#3d6791); }.template-preview.minimal { background:linear-gradient(140deg,#cbd3df,#f4b38e); }.preview-bar { height:8px;width:42px;border-radius:4px;background:rgba(255,255,255,.7); }.preview-content { display:flex;flex-direction:column;gap:8px;margin-top:46px; }.preview-content span { display:block;height:7px;border-radius:4px;background:rgba(255,255,255,.75); }.preview-content span:nth-child(1){width:62%}.preview-content span:nth-child(2){width:84%;opacity:.55}.preview-content span:nth-child(3){width:35%;opacity:.35}.template-preview strong { position:absolute;bottom:14px;right:15px;font-size:28px;opacity:.5; }.template-info { padding:15px 2px 12px; }.template-info h3 { margin:0 0 5px;font-size:14px; }.template-info p { margin:0;color:var(--muted);font-size:11px; }.template-action { width:100%; }
   .resource-table { border:1px solid var(--line);border-radius:10px;overflow:hidden; }.ad-title { display:flex;align-items:center;gap:11px; }.ad-title small { display:block;color:var(--muted);font-size:11px;margin-top:4px; }.ad-thumb { width:34px;height:34px;border-radius:8px; }.ad-thumb.violet { background:linear-gradient(135deg,#7c67d9,#c19ee5); }.ad-thumb.orange { background:linear-gradient(135deg,#ec9957,#f6d2a0); }.ad-thumb.blue { background:linear-gradient(135deg,#68a5dc,#afd3f0); }
   .source-list { display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden; }.source-list.compact { margin-top:16px; }.source-row { display:flex;align-items:center;gap:15px;padding:17px 20px;border-bottom:1px solid #f0f2f6; }.source-row:last-child { border-bottom:0; }.source-mark { display:grid;place-items:center;width:36px;height:36px;border-radius:9px;color:#6673a5;background:#eef0ff;font-size:18px; }.source-main { flex:1;display:flex;flex-direction:column;gap:4px; }.source-main strong { font-size:13px; }.source-main span,.source-updated { color:var(--muted);font-size:11px; }.source-updated { margin-right:10px; }.source-dialog-note { display:flex;gap:8px;padding:12px 14px;color:#63709b;background:#f2f3ff;border-radius:8px;font-size:12px; }.dialog-placeholder { text-align:center;padding:18px 30px 30px; }.placeholder-icon { display:grid;place-items:center;width:60px;height:60px;margin:auto;border-radius:17px;color:#6656c8;background:#f0edff;font-size:28px; }.dialog-placeholder h3 { margin:16px 0 8px; }.dialog-placeholder p { color:var(--muted);font-size:13px;line-height:21px; }
-  @media (max-width: 1000px) { .hero-panel,.control-strip,.tab-toolbar { align-items:flex-start;flex-direction:column; }.quick-stats { width:100%;justify-content:space-between; }.resource-grid,.template-grid { grid-template-columns:1fr 1fr; } }. 
-  @media (max-width: 640px) { .resource-center { padding:12px; }.resource-grid,.template-grid { grid-template-columns:1fr; }.toolbar-actions { width:100%;flex-wrap:wrap; }.search-input { width:100%; }.hero-actions { width:100%;justify-content:space-between; }.control-strip { padding:14px; }.app-context { flex-wrap:wrap; } }
+  @media (max-width: 1000px) { .hero-panel,.control-strip,.tab-toolbar { align-items:flex-start;flex-direction:column; }.quick-stats { width:100%;justify-content:space-between; }.resource-grid,.template-grid { grid-template-columns:1fr 1fr; } }
+  @media (max-width: 640px) { .resource-center { padding:12px; }.hero-panel { padding:22px 18px; border-radius:14px; }.hero-panel h1 { font-size:24px; }.hero-panel p { line-height:19px; }.hero-actions { width:100%; justify-content:space-between; gap:8px; }.sync-state { font-size:11px; }.control-strip { align-items:stretch; padding:12px; margin:12px 0; }.app-context { flex-wrap:wrap; gap:8px; }.app-select { width:100%; }.scope-badge { order:3; }.quick-stats { display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; padding-top:12px; border-top:1px solid var(--line); }.workspace-card { border-radius:12px; }.overview-links { grid-template-columns:1fr; gap:10px; }.overview-link { padding:14px; }.resource-grid,.template-grid { grid-template-columns:1fr; }.toolbar-actions { width:100%; flex-wrap:wrap; }.search-input { width:100%; }.tab-toolbar { align-items:stretch; }.resource-table { overflow-x:auto; } }
 </style>
