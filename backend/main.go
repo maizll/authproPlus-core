@@ -143,6 +143,11 @@ func main() {
 		api.GET("/software-source/templates/:id/preview", handler.PublicSoftwareSourceTemplatePreview)
 		api.POST("/internal/software-source/cache/invalidate", handler.InternalSoftwareSourceCacheInvalidate)
 
+		// Plus 客户端资源目录：通过 appKey 限定应用范围，后续下载动作再叠加授权权益校验。
+		api.GET("/client/apps/:appKey/plugins", handler.PlusClientPlugins)
+		api.GET("/client/apps/:appKey/templates", handler.PlusClientTemplates)
+		api.GET("/client/apps/:appKey/advertisements", handler.PlusClientAdvertisements)
+
 		// 用户端（需鉴权）
 		userSecured := api.Group("/user-panel")
 		userSecured.Use(middleware.JWTAuth(), middleware.RequireActiveUser(), middleware.RequireFreshPassword("users"))
