@@ -449,6 +449,9 @@ func main() {
 		if err := ensureLicenseSiteLimitSchema(db); err != nil {
 			log.Printf("ensure license site limit schema failed: %v", err)
 		}
+		if err := handler.EnsurePlusResourceSchema(db); err != nil {
+			log.Printf("ensure Plus resource schema failed: %v", err)
+		}
 		handler.BackfillLicensePurchaseTransactions(db)
 	}()
 
