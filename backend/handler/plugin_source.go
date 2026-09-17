@@ -215,7 +215,7 @@ func AdminPluginList(c *gin.Context) {
 			local = append(local, plugin)
 		}
 		if managedDB, managedErr := managedResourceDB(); managedErr == nil {
-			rows, queryErr := managedDB.Query(`SELECT plugin_id, category, name, description, homepage, icon, version, author_name, download_url, enabled FROM plus_managed_plugins WHERE published=1 ORDER BY id ASC`)
+			rows, queryErr := managedDB.Query(`SELECT m.plugin_id, m.category, m.name, m.description, m.homepage, m.icon, m.version, m.author_name, m.download_url, COALESCE(p.enabled, m.enabled) FROM plus_managed_plugins m LEFT JOIN plugins p ON p.id=m.plugin_id WHERE m.published=1 ORDER BY m.id ASC`)
 			if queryErr == nil {
 				for rows.Next() {
 					var item pluginInfo
