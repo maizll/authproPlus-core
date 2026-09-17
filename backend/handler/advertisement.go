@@ -79,6 +79,11 @@ func advertisementsForPosition(ctx context.Context, position string) []advertise
 	lock := advertisementLocks[position]
 	lock.Lock()
 	defer lock.Unlock()
+	managed := managedAdsForPosition(position)
+	if managed != nil {
+		writeAdvertisementCache(position, managed)
+		return managed
+	}
 
 	cached, cachedOK := readAdvertisementCache(position)
 	if cachedOK && time.Since(cached.fetchedAt) < config.GetAdvertisementCacheTTL() {

@@ -29,3 +29,9 @@ export function fetchAdvertisements(position: AdPosition) {
     showErrorMessage: false
   })
 }
+
+export interface ManagedAdInput { id?: number; adKey: string; title: string; imageUrl?: string; destinationUrl?: string; position: AdPosition; weight: number; startAt?: string; endAt?: string; description?: string; published: boolean }
+export interface ManagedAdItem extends ManagedAdInput { id: number }
+export function fetchManagedAds() { return request.get<{ list: ManagedAdItem[] }>({ url: '/api/system/managed-ads' }) }
+export function saveManagedAd(data: ManagedAdInput) { return request.post<null>({ url: '/api/system/managed-ads', data }) }
+export function deleteManagedAd(id: number) { return request.del<null>({ url: `/api/system/managed-ads/${id}` }) }
