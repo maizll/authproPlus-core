@@ -670,3 +670,15 @@ export function fetchEnableHomeTemplate(id: number | 'default') {
     url: `/api/system/home-templates/${id}/enable`
   })
 }
+
+export interface ManagedPluginInput { id?: number; pluginId: string; category: string; name: string; description?: string; homepage?: string; icon?: string; version?: string; author?: string; downloadUrl?: string; published: boolean }
+export interface ManagedPluginItem extends ManagedPluginInput { id: number; enabled: boolean }
+export function fetchManagedPlugins() { return request.get<{ list: ManagedPluginItem[] }>({ url: '/api/system/managed-plugins' }) }
+export function saveManagedPlugin(data: ManagedPluginInput) { return request.post<null>({ url: '/api/system/managed-plugins', data }) }
+export function deleteManagedPlugin(id: number) { return request.del<null>({ url: `/api/system/managed-plugins/${id}` }) }
+
+export interface ManagedTemplateInput { id?: number; templateId: string; name: string; description?: string; version?: string; previewUrl?: string; contentUrl: string; sha256?: string; schemaVersion?: number; author?: string; published: boolean }
+export interface ManagedTemplateItem extends ManagedTemplateInput { id: number }
+export function fetchManagedTemplates() { return request.get<{ list: ManagedTemplateItem[] }>({ url: '/api/system/managed-templates' }) }
+export function saveManagedTemplate(data: ManagedTemplateInput) { return request.post<null>({ url: '/api/system/managed-templates', data }) }
+export function deleteManagedTemplate(id: number) { return request.del<null>({ url: `/api/system/managed-templates/${id}` }) }

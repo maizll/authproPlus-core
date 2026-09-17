@@ -292,6 +292,19 @@ func AdminPluginToggle(c *gin.Context) {
 	id := strings.TrimSpace(c.Param("id"))
 	plugin, ok := findCatalogPlugin(id)
 	if !ok {
+		if managedDB, managedErr := managedResourceDB(); managedErr == nil {
+			var managed pluginInfo
+			var authorName string
+			managedErr = managedDB.QueryRow(`SELECT plugin_id, category, name, description, homepage, icon, version, author_name, download_url FROM plus_managed_plugins WHERE plugin_id=? AND published=1`, id).
+				Scan(&managed.ID, &managed.Category, &managed.Name, &managed.Description, &managed.Homepage, &managed.Icon, &managed.Version, &authorName, &managed.DownloadURL)
+			managedDB.Close()
+			if managedErr == nil {
+				managed.Author = templateAuthor{Name: authorName}
+				plugin, ok = managed, true
+			}
+		}
+	}
+	if !ok {
 		c.JSON(http.StatusOK, gin.H{"code": 404, "msg": "插件不存在"})
 		return
 	}

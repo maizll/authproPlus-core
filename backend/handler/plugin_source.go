@@ -214,6 +214,23 @@ func AdminPluginList(c *gin.Context) {
 			plugin.Source = "builtin"
 			local = append(local, plugin)
 		}
+		if managedDB, managedErr := managedResourceDB(); managedErr == nil {
+			rows, queryErr := managedDB.Query(`SELECT plugin_id, category, name, description, homepage, icon, version, author_name, download_url, enabled FROM plus_managed_plugins WHERE published=1 ORDER BY id ASC`)
+			if queryErr == nil {
+				for rows.Next() {
+					var item pluginInfo
+					var authorName string
+					if rows.Scan(&item.ID, &item.Category, &item.Name, &item.Description, &item.Homepage, &item.Icon, &item.Version, &authorName, &item.DownloadURL, &item.Enabled) == nil {
+						item.Author = templateAuthor{Name: authorName}
+						item.Remote = true
+						item.Source = "Plus 托管源"
+						local = append(local, item)
+					}
+				}
+				rows.Close()
+			}
+			managedDB.Close()
+		}
 	}
 	remote := make([]pluginInfo, 0)
 	sourceOK := make(map[int64]bool)
